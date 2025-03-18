@@ -173,7 +173,7 @@ def main():
         elif lose and not win:
             loseScreen()
 
-        checkState()
+        #checkState()
         pg.display.flip()
         clock.tick(10)
 
