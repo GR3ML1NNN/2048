@@ -128,10 +128,43 @@ def rotate(grid):
 def randomSquare(grid):
     i = random.randint(0,3)
     j = random.randint(0,3)
-    while grid[i][j] != 0:
+    flatGrid = [cell for row in grid for cell in row]
+    while grid[i][j] != 0 and 0 in flatGrid:
         i = random.randint(0,3)
         j = random.randint(0,3)
-    grid[i][j] = 2
+        if 0 not in flatGrid:
+            break
+    if 0 in flatGrid:
+        grid[i][j] = 2
+
+def checkState(grid):
+    flatGrid = [cell for row in grid for cell in row]
+    for i in range(4):
+        for j in range(4):
+            if j != 3 and grid[i][j] == grid[i][j + 1] or \
+                i != 3 and grid[i][j] == grid[i + 1][j]:
+                    return False
+
+    if 0 not in flatGrid:
+        return True
+    else:
+        return False
+
+def endScreen(win, lose):
+    global screenWidth, screenHeight
+    global font
+    s = pg.Surface((screenWidth, screenHeight), pg.SRCALPHA)
+    s.set_alpha(128)
+    s.fill((0,0,0))
+    screen.blit(s, (0, 0))
+
+    if win:
+        msg = "You Win"
+    if lose:
+        msg = "Loser!"
+
+    screen.blit(font.render(msg, True, (224, 222, 244)), 
+                (screenWidth // 3, screenHeight // 3))
 
 def main():
     global grid
@@ -165,15 +198,14 @@ def main():
             win = True
 
         screen.fill("#f2e9e1")
+        drawGrid(grid)
 
-        if not win:
-            drawGrid(grid)
-        elif win and not lose:
-            winScreen()
-        elif lose and not win:
-            loseScreen()
+        if win and not lose:
+            endScreen(win, lose)
+        if lose and not win:
+            endScreen(win, lose)
 
-        #checkState()
+        lose = checkState(grid)
         pg.display.flip()
         clock.tick(10)
 
